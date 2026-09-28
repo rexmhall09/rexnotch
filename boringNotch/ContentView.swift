@@ -96,25 +96,12 @@ struct ContentView: View {
         )
     }
 
-    /// Closed-notch activities, newest first. A notification sits in front of
-    /// music, so an incoming message takes over the display; when it expires
-    /// it drops out of this list on its own and music comes back — no
-    /// explicit "restore previous activity" bookkeeping needed.
+    /// Keep the idle closed notch empty; notifications still appear briefly.
     private var liveActivities: [LiveActivityItem] {
         var items: [LiveActivityItem] = []
 
         if let notification = notificationManager.activeNotification {
             items.append(.notification(notification))
-        }
-
-        let musicIsShowing = (!coordinator.expandingView.show || coordinator.expandingView.type == .music)
-            && (musicManager.isPlaying || !musicManager.isPlayerIdle)
-            && coordinator.musicLiveActivityEnabled
-        // The inline song-change peek is drawn inside the music pill, so it
-        // has to bring the pill with it even when the persistent live
-        // activity is turned off — otherwise the peek never appears.
-        if musicIsShowing || showingInlineMusicPeek {
-            items.append(.music)
         }
 
         return items
@@ -178,13 +165,6 @@ struct ContentView: View {
         if !liveActivities.isEmpty, !vm.hideOnClosed {
             return .activities(liveActivities)
         }
-        if !coordinator.expandingView.show,
-           !musicManager.isPlaying,
-           musicManager.isPlayerIdle,
-           Defaults[.showNotHumanFace],
-           !vm.hideOnClosed {
-            return .face
-        }
         return .idle
     }
 
@@ -213,10 +193,6 @@ struct ContentView: View {
                     chinWidth += 2 * inlineMusicPeekLabelWidth
                 }
             }
-        } else if !coordinator.expandingView.show && vm.notchState == .closed
-            && (!musicManager.isPlaying && musicManager.isPlayerIdle) && Defaults[.showNotHumanFace]
-            && !vm.hideOnClosed {
-            chinWidth += (2 * max(0, displayClosedNotchHeight - 12) + 20)
         }
 
         return chinWidth
@@ -480,9 +456,7 @@ struct ContentView: View {
                                       .frame(alignment: .center)
                               }
                           }
-                      } else if !coordinator.expandingView.show && vm.notchState == .closed && (!musicManager.isPlaying && musicManager.isPlayerIdle) && Defaults[.showNotHumanFace] && !vm.hideOnClosed {
-                          BoringFaceAnimation()
-                       } else if showsHeader {
+                      } else if showsHeader {
                            // No tab bar over a notification: it's a glance,
                            // not a place to switch between home and shelf —
                            // and the header spans the full notch width,
@@ -496,7 +470,8 @@ struct ContentView: View {
                         else if !vm.hasNotch {
                            Rectangle().fill(.clear).frame(width: vm.closedNotchSize.width - 20, height: 11) // idle notch height is halved on non notch display
                        } else {
-                           Rectangle().fill(.clear).frame(width: vm.closedNotchSize.width - 20, height: displayClosedNotchHeight)
+                           Rectangle().fill(.clear)
+                               .frame(width: vm.closedNotchSize.width - 20, height: displayClosedNotchHeight)
                        }
 
                         if coordinator.shouldShowSneakPeek(on: vm.screenUUID) {
@@ -568,19 +543,11 @@ struct ContentView: View {
                             isHoveringMusicArea = false
                         }
                     } else {
-                        switch coordinator.currentView {
-                        case .home:
-                            NotchHomeView(
-                                albumArtNamespace: albumArtNamespace,
-                                horizontalMediaGestureFeedback: horizontalMediaGestureFeedback,
-                                isHoveringMusicArea: $isHoveringMusicArea
-                            )
-                        case .shelf:
-                            ShelfView(
-                                dropInteraction: vm.dropInteraction,
-                                animation: vm.animation
-                            )
-                        }
+                        NotchHomeView(
+                            albumArtNamespace: albumArtNamespace,
+                            horizontalMediaGestureFeedback: horizontalMediaGestureFeedback,
+                            isHoveringMusicArea: $isHoveringMusicArea
+                        )
                     }
                 }
                 .transition(

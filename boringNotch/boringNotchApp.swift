@@ -52,6 +52,7 @@ struct DynamicNotchApp: App {
     let updaterController: SPUStandardUpdaterController
 
     init() {
+        Defaults[.boringShelf] = false
         #if DEBUG
         OTPDetector.runSelfCheck()
         #endif
@@ -80,20 +81,19 @@ struct DynamicNotchApp: App {
                 }
                 NSLog("Failed to migrate legacy Boring Notch app bundle at %@", sourceURL.path)
             }
-            updaterController.startUpdater()
+            // RexNotch has no update feed; never replace this fork with upstream builds.
         }
     }
 
     var body: some Scene {
-        MenuBarExtra("boring.notch", systemImage: "sparkle", isInserted: $showMenuBarIcon) {
+        MenuBarExtra("RexNotch", systemImage: "sparkle", isInserted: $showMenuBarIcon) {
             Button("Settings") {
                 DispatchQueue.main.async {
                     SettingsWindowController.shared.showWindow()
                 }
             }
             .keyboardShortcut(KeyEquivalent(","), modifiers: .command)
-            CheckForUpdatesView(updater: updaterController.updater)
-            Button("Restart Boring Notch") {
+            Button("Restart RexNotch") {
                 ApplicationRelauncher.restart()
             }
             Button("Quit", role: .destructive) {

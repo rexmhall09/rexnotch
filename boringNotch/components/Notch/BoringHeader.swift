@@ -12,14 +12,14 @@ struct BoringHeader: View {
     @EnvironmentObject var vm: BoringViewModel
     @ObservedObject var batteryModel = BatteryStatusViewModel.shared
     @ObservedObject var coordinator = BoringViewCoordinator.shared
-    @StateObject var shelfState = ShelfStateViewModel.shared
+    @ObservedObject var rexData = RexDashboardData.shared
     var body: some View {
         HStack(spacing: 0) {
             HStack {
-                if (!shelfState.isEmpty || coordinator.alwaysShowTabs) && Defaults[.boringShelf] {
-                    TabSelectionView()
-                } else if vm.notchState == .open {
-                    EmptyView()
+                if vm.notchState == .open {
+                    Text("AI Agents")
+                        .font(.system(size: 19, weight: .bold))
+                        .foregroundStyle(.white)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -47,6 +47,9 @@ struct BoringHeader: View {
                         )
                             .transition(.scale(scale: 0.8).combined(with: .opacity))
                     } else {
+                        RexMetricLabel(name: "CPU", value: rexData.cpu)
+                        RexMetricLabel(name: "GPU", value: rexData.gpu)
+                        RexMetricLabel(name: "RAM", value: rexData.ram)
                         if Defaults[.showMirror] && coordinator.currentView == .home {
                             Button(action: {
                                 vm.toggleCameraPreview()

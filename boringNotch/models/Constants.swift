@@ -391,7 +391,7 @@ extension Defaults.Keys {
     static let updateChannel = Key<UpdateChannel>("updateChannel", default: UpdateChannel.bundled)
 
     // MARK: Behavior
-    static let minimumHoverDuration = Key<TimeInterval>("minimumHoverDuration", default: 0.3)
+    static let minimumHoverDuration = Key<TimeInterval>("minimumHoverDuration", default: 0.15)
     static let enableOpeningAnimation = Key<Bool>("enableOpeningAnimation", default: true)
     static let animationSpeedMultiplier = Key<Double>("animationSpeedMultiplier", default: 1.0)
     static let enableHaptics = Key<Bool>("enableHaptics", default: true)
@@ -424,7 +424,7 @@ extension Defaults.Keys {
 
     static let showNotHumanFace = Key<Bool>("showNotHumanFace", default: false)
     static let tileShowLabels = Key<Bool>("tileShowLabels", default: false)
-    static let showCalendar = Key<Bool>("showCalendar", default: false)
+    static let showCalendar = Key<Bool>("showCalendar", default: true)
     static let hideCompletedReminders = Key<Bool>("hideCompletedReminders", default: true)
     static let sliderColor = Key<SliderColorEnum>(
         "sliderUseAlbumArtColor",
@@ -481,8 +481,8 @@ extension Defaults.Keys {
 
     // MARK: Notifications
     /// Off by default: mirroring banners needs Accessibility access.
-    static let notificationLiveActivity = Key<Bool>("notificationLiveActivity", default: false)
-    static let notificationsFromAllApps = Key<Bool>("notificationsFromAllApps", default: false)
+    static let notificationLiveActivity = Key<Bool>("notificationLiveActivity", default: true)
+    static let notificationsFromAllApps = Key<Bool>("notificationsFromAllApps", default: true)
     static let notificationAllowedApps = Key<Set<String>>(
         "notificationAllowedApps",
         default: []
@@ -500,7 +500,7 @@ extension Defaults.Keys {
     static let osdVolumeSource = Key<OSDControlSource>("osdVolumeSource", default: .builtin)
 
     // MARK: Shelf
-    static let boringShelf = Key<Bool>("boringShelf", default: true)
+    static let boringShelf = Key<Bool>("boringShelf", default: false)
     static let openShelfByDefault = Key<Bool>("openShelfByDefault", default: true)
     static let shelfTapToOpen = Key<Bool>("shelfTapToOpen", default: true)
     static let quickShareProvider = Key<String>("quickShareProvider", default: QuickShareProvider.defaultProvider.id)
