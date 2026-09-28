@@ -1,7 +1,5 @@
-import Defaults
 import SwiftUI
 
-private let rexSurface = Color(red: 0.075, green: 0.082, blue: 0.078)
 private let rexMuted = Color.white.opacity(0.53)
 private let claudeColor = Color(red: 0.79, green: 0.43, blue: 0.33)
 private let codexColor = Color(red: 0.45, green: 0.56, blue: 0.92)
@@ -30,41 +28,39 @@ struct RexDashboardView: View {
     @Binding var isHoveringMusicArea: Bool
 
     var body: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 12) {
+        VStack(spacing: 9) {
+            HStack(alignment: .top, spacing: 16) {
                 RexUsageCard(data: data).frame(maxWidth: .infinity)
+                Rectangle()
+                    .fill(.white.opacity(0.12))
+                    .frame(width: 1, height: 192)
                 CalendarView()
                     .environmentObject(vm)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(16)
-                    .background(rexSurface, in: RoundedRectangle(cornerRadius: 23))
-                    .overlay(RoundedRectangle(cornerRadius: 23).strokeBorder(.white.opacity(0.08)))
                     .onHover { vm.isHoveringCalendar = $0 }
             }
-            .frame(height: 210)
+            .frame(height: 200)
 
             if music.isPlaying {
+                Rectangle().fill(.white.opacity(0.12)).frame(height: 1)
                 MusicPlayerView(
                     albumArtNamespace: albumArtNamespace,
                     horizontalMediaGestureFeedback: horizontalMediaGestureFeedback,
                     isHoveringMusicArea: $isHoveringMusicArea
                 )
                 .frame(maxWidth: .infinity)
-                .frame(height: 102)
-                .padding(.horizontal, 12)
-                .background(rexSurface, in: RoundedRectangle(cornerRadius: 23))
-                .overlay(RoundedRectangle(cornerRadius: 23).strokeBorder(.white.opacity(0.08)))
+                .frame(height: 98)
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .padding(.horizontal, 16)
-        .frame(width: 834)
+        .padding(.horizontal, 20)
+        .frame(width: 734)
         .onAppear { updateHeight() }
         .onChange(of: music.isPlaying) { _, _ in updateHeight() }
     }
 
     private func updateHeight() {
-        vm.notchSize = CGSize(width: openNotchSize.width, height: music.isPlaying ? 390 : 288)
+        vm.notchSize = CGSize(width: openNotchSize.width, height: music.isPlaying ? 365 : 255)
     }
 }
 
@@ -72,24 +68,14 @@ private struct RexUsageCard: View {
     @ObservedObject var data: RexDashboardData
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 9) {
-            HStack {
-                Image(systemName: "sparkles").foregroundStyle(Color.effectiveAccent)
-                Text("Plan usage").font(.system(size: 15, weight: .semibold))
-                Spacer()
-                Button { data.refreshUsage() } label: {
-                    Image(systemName: "arrow.clockwise").font(.system(size: 12)).foregroundStyle(rexMuted)
-                }.buttonStyle(.plain).help("Refresh Claude and Codex usage")
-            }
+        VStack(alignment: .leading, spacing: 11) {
             quota("Claude", data.claude, claudeColor)
             Rectangle().fill(.white.opacity(0.08)).frame(height: 1)
             quota("Codex", data.codex, codexColor)
             Spacer(minLength: 0)
         }
-        .padding(16)
+        .padding(.top, 4)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(rexSurface, in: RoundedRectangle(cornerRadius: 23))
-        .overlay(RoundedRectangle(cornerRadius: 23).strokeBorder(.white.opacity(0.08)))
     }
 
     private func quota(_ name: String, _ quota: RexQuota, _ color: Color) -> some View {
@@ -118,7 +104,7 @@ private struct RexUsageCard: View {
         VStack(spacing: 3) {
             HStack(spacing: 5) {
                 Text(name)
-                if let reset { Text("↻ " + resetText(reset)).foregroundStyle(rexMuted) }
+                if let reset { Text(resetText(reset)).foregroundStyle(rexMuted) }
                 Spacer()
                 Text(percent.map { "\(Int($0.rounded()))%" } ?? "—").fontWeight(.bold)
             }

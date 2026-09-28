@@ -9,22 +9,7 @@ import Defaults
 import SwiftUI
 
 struct MediaSettingsView: View {
-    @Default(.waitInterval) var waitInterval
-    @ObservedObject var coordinator = BoringViewCoordinator.shared
-    @Default(.hideNotchOption) var hideNotchOption
-    @Default(.enableSneakPeek) private var enableSneakPeek
-    @Default(.sneakPeekStyles) var sneakPeekStyles
-    @Default(.sliderColor) var sliderColor
-
-    @Default(.enableLyrics) var enableLyrics
     @ObservedObject private var musicManager = MusicManager.shared
-
-    private var realtimeAudioWaveformSupported: Bool {
-        if #available(macOS 14.2, *) {
-            return true
-        }
-        return false
-    }
 
     var body: some View {
         Form {
@@ -46,63 +31,7 @@ struct MediaSettingsView: View {
             }
 
             Section {
-                Toggle(
-                    "Show music live activity",
-                    isOn: $coordinator.musicLiveActivityEnabled.animation()
-                )
-                Toggle("Show sneak peek on playback changes", isOn: $enableSneakPeek)
-                Picker("Sneak Peek Style", selection: $sneakPeekStyles) {
-                    ForEach(SneakPeekStyle.allCases) { style in
-                        Text(style.localizedString).tag(style)
-                    }
-                }
-                HStack {
-                    Stepper(value: $waitInterval, in: 0...10, step: 1) {
-                        HStack {
-                            Text("Media inactivity timeout")
-                            Spacer()
-                            Text(
-                                Measurement(
-                                    value: Defaults[.waitInterval],
-                                    unit: UnitDuration.seconds
-                                ),
-                                format: .measurement(
-                                    width: .wide,
-                                    usage: .asProvided,
-                                    numberFormatStyle: .number.precision(
-                                        .fractionLength(0)
-                                    )
-                                )
-                            )
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-                Picker(
-                    selection: $hideNotchOption,
-                    label:
-                        HStack {
-                            Text("Full screen behavior")
-                            customBadge(text: "Beta")
-                        }
-                ) {
-                    Text("Hide for all apps").tag(HideNotchOption.always)
-                    Text("Hide for media app only").tag(
-                        HideNotchOption.nowPlayingOnly)
-                    Text("Never hide").tag(HideNotchOption.never)
-                }
-            } header: {
-                Text("Media playback live activity")
-            }
-
-            Section {
                 MusicSlotConfigurationView()
-                Defaults.Toggle(key: .enableLyrics) {
-                    HStack {
-                        Text("Show lyrics below artist name")
-                        customBadge(text: "Beta")
-                    }
-                }
                 Defaults.Toggle(key: .showRemainingTime) {
                     Text("Show remaining time instead of duration")
                 }
@@ -114,39 +43,6 @@ struct MediaSettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Section {
-                Defaults.Toggle(key: .coloredSpectrogram) {
-                    Text("Colored spectrogram")
-                }
-                Defaults.Toggle(key: .realtimeAudioWaveform) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Real-time audio waveform")
-                        Group {
-                            if realtimeAudioWaveformSupported {
-                                Text("Uses Accelerate FFT on the playing app's audio. Requires audio capture permission and uses slightly more CPU.")
-                            } else {
-                                Text("Requires macOS 14.2 or later. Update macOS to enable real-time audio waveform.")
-                            }
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    }
-                }
-                .disabled(!realtimeAudioWaveformSupported)
-                Defaults.Toggle(key: .playerColorTinting) {
-                    Text("Player tinting")
-                }
-                Defaults.Toggle(key: .lightingEffect) {
-                    Text("Enable blur effect behind album art")
-                }
-                Picker("Slider color", selection: $sliderColor) {
-                    ForEach(SliderColorEnum.allCases, id: \.self) { option in
-                        Text(option.localizedString)
-                    }
-                }
-            } header: {
-                Text("Player appearance")
-            }
         }
         .accentColor(.effectiveAccent)
         .navigationTitle("Media")

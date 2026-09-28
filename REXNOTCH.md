@@ -17,10 +17,12 @@ The product is `RexNotch.app`. The fork removes an unused `swift-collections` li
 ## Data and permissions
 
 - **Closed notch:** Empty while idle. Volume, brightness, and incoming notification indicators appear transiently.
-- **Expanded panel:** Claude and Codex session and weekly usage, Boring Notch's original calendar, Now Playing only while playback is active, and live CPU/GPU/RAM percentages in the header. The existing Boring Notch hover animation and controls remain in use.
+- **Expanded panel:** Claude and Codex session and weekly usage, Boring Notch's original calendar, Now Playing only while playback is active, and live CPU/GPU/RAM percentages on the left. The content sits directly on the notch surface. The existing Boring Notch hover animation remains in use.
+- **Power:** The single button cycles Normal → Battery Saver → Keep Awake → Normal. Each click changes macOS power settings with an administrator prompt. Keep Awake uses `pmset disablesleep 1` so it works with the lid closed; the other two modes restore `disablesleep 0`. The selected mode remains in effect until you change it, including after RexNotch quits.
+- **Update All:** Opens a Terminal window to run `brew update`, upgrade Homebrew formulae and casks, then update Mac App Store apps with `mas`. If `mas` is missing, the command installs it first. It does not install macOS system updates. No updates start until you click.
 - **Shelf:** Disabled in this fork; the panel always opens to the dashboard.
 - **Usage:** RexNotch reads the existing Claude Code Keychain login and `~/.codex/auth.json`, then queries the two providers' usage endpoints directly. It refreshes expired access tokens through their OAuth endpoints. No credentials are sent to RexNotch's developer or stored outside the provider login locations. These usage endpoints may change.
-- **Calendar:** EventKit requests Calendar access when you use the card. The app's bundle ID is new, so macOS will ask again even if Boring Notch already had access.
+- **Calendar:** EventKit requests Calendar access when you use the calendar. The app's bundle ID is new, so macOS will ask again even if Boring Notch already had access.
 - **Notifications:** Boring Notch's Accessibility based mirroring is enabled by default. Approve Accessibility for RexNotch when requested. It mirrors visible banners; it does not read Notification Center history.
 - **Volume and brightness:** The existing Boring Notch HUD and media key handling are retained.
 

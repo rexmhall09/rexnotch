@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		AE0100012E7A000100000001 /* RexDashboardData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE0100032E7A000100000001 /* RexDashboardData.swift */; };
 		AE0100022E7A000100000001 /* RexDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE0100042E7A000100000001 /* RexDashboardView.swift */; };
+		AE0100052E7A000100000001 /* RexSystemControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE0100062E7A000100000001 /* RexSystemControls.swift */; };
 		07FE456E7AEA085D9FCA6D97 /* MeetingLinkDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B2A5E5F4D28F1DD9CD0B09 /* MeetingLinkDetector.swift */; };
 		110029272E84FD4C00035A57 /* TemporaryFileStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110029262E84FD4C00035A57 /* TemporaryFileStorageService.swift */; };
 		1100292A2E8691B400035A57 /* FileShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110029292E8691B400035A57 /* FileShareView.swift */; };
@@ -186,6 +187,7 @@
 /* Begin PBXFileReference section */
 		AE0100032E7A000100000001 /* RexDashboardData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RexDashboardData.swift; sourceTree = "<group>"; };
 		AE0100042E7A000100000001 /* RexDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RexDashboardView.swift; sourceTree = "<group>"; };
+		AE0100062E7A000100000001 /* RexSystemControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RexSystemControls.swift; sourceTree = "<group>"; };
 		0268933F488E47DFB58E48CF /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 		033B8885979E4EA1A78E8ADC /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		110029262E84FD4C00035A57 /* TemporaryFileStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryFileStorageService.swift; sourceTree = "<group>"; };
@@ -768,6 +770,7 @@
 			children = (
 				AE0100032E7A000100000001 /* RexDashboardData.swift */,
 				AE0100042E7A000100000001 /* RexDashboardView.swift */,
+				AE0100062E7A000100000001 /* RexSystemControls.swift */,
 				AA01NLA22E7A0001 /* NotificationLiveActivity.swift */,
 				AA06CHV22E7A0001 /* CompactHomeView.swift */,
 				AA04LAS22E7A0001 /* LiveActivityStack.swift */,
@@ -1034,6 +1037,7 @@
 				9AB0C6BD2C73C9CB00F7CD30 /* NotchHomeView.swift in Sources */,
 				AE0100012E7A000100000001 /* RexDashboardData.swift in Sources */,
 				AE0100022E7A000100000001 /* RexDashboardView.swift in Sources */,
+				AE0100052E7A000100000001 /* RexSystemControls.swift in Sources */,
 				B172AAC02C95DA0B001623F1 /* InlineOSD.swift in Sources */,
 				1153BD912D986DB300979FB0 /* PlaybackState.swift in Sources */,
 				B1A78C822C8BA08100BD51B0 /* FullscreenMediaDetection.swift in Sources */,

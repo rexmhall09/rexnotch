@@ -10,16 +10,16 @@ import SwiftUI
 
 struct BoringHeader: View {
     @EnvironmentObject var vm: BoringViewModel
-    @ObservedObject var batteryModel = BatteryStatusViewModel.shared
     @ObservedObject var coordinator = BoringViewCoordinator.shared
     @ObservedObject var rexData = RexDashboardData.shared
+    @ObservedObject var controls = RexSystemControls.shared
     var body: some View {
         HStack(spacing: 0) {
-            HStack {
+            HStack(spacing: 8) {
                 if vm.notchState == .open {
-                    Text("AI Agents")
-                        .font(.system(size: 19, weight: .bold))
-                        .foregroundStyle(.white)
+                    RexMetricLabel(name: "CPU", value: rexData.cpu)
+                    RexMetricLabel(name: "GPU", value: rexData.gpu)
+                    RexMetricLabel(name: "RAM", value: rexData.ram)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -36,7 +36,7 @@ struct BoringHeader: View {
                     }
             }
 
-            HStack(spacing: 4) {
+            HStack(spacing: 8) {
                 if vm.notchState == .open {
                     if isOSDType(coordinator.sneakPeekState(for: vm.screenUUID).type) && coordinator.shouldShowSneakPeek(on: vm.screenUUID) && Defaults[.showOpenNotchOSD] {
                         OpenNotchOSD(
@@ -47,61 +47,29 @@ struct BoringHeader: View {
                         )
                             .transition(.scale(scale: 0.8).combined(with: .opacity))
                     } else {
-                        RexMetricLabel(name: "CPU", value: rexData.cpu)
-                        RexMetricLabel(name: "GPU", value: rexData.gpu)
-                        RexMetricLabel(name: "RAM", value: rexData.ram)
-                        if Defaults[.showMirror] && coordinator.currentView == .home {
-                            Button(action: {
-                                vm.toggleCameraPreview()
-                            }) {
-                                Capsule()
-                                    .fill(.black)
-                                    .frame(width: 30, height: 30)
-                                    .overlay {
-                                        Image(systemName: "web.camera")
-                                            .foregroundColor(.white)
-                                            .padding()
-                                            .imageScale(.medium)
-                                    }
-                            }
-                            .buttonStyle(PlainButtonStyle())
+                        Button {
+                            controls.cyclePower()
+                        } label: {
+                            Label(controls.mode.title, systemImage: controls.mode.symbol)
+                                .foregroundStyle(Color.effectiveAccent)
                         }
-                        if Defaults[.settingsIconInNotch] {
-                            Button(action: {
-                                DispatchQueue.main.async {
-                                    SettingsWindowController.shared.showWindow()
-                                }
-                            }) {
-                                Capsule()
-                                    .fill(.black)
-                                    .frame(width: 30, height: 30)
-                                    .overlay {
-                                        Image(systemName: "gear")
-                                            .foregroundColor(.white)
-                                            .padding()
-                                            .imageScale(.medium)
-                                    }
-                            }
-                            .buttonStyle(PlainButtonStyle())
+                        .disabled(controls.isChangingPower)
+                        .help("Cycle Normal → Battery Saver → Keep Awake")
+
+                        Button("Update All") { controls.startUpdateAll() }
+                            .help("Update Homebrew and Mac App Store apps in Terminal")
+
+                        Button {
+                            SettingsWindowController.shared.showWindow()
+                        } label: {
+                            Image(systemName: "gearshape")
                         }
-                        if Defaults[.showBatteryIndicator] {
-                            BoringBatteryView(
-                                batteryWidth: 30,
-                                isCharging: batteryModel.isCharging,
-                                isInLowPowerMode: batteryModel.isInLowPowerMode,
-                                isPluggedIn: batteryModel.isPluggedIn,
-                                levelBattery: batteryModel.levelBattery,
-                                maxCapacity: batteryModel.maxCapacity,
-                                timeToFullCharge: batteryModel.timeToFullCharge,
-                                timeToDischarge: batteryModel.timeToDischarge,
-                                maxAdapterWatts: batteryModel.maxAdapterWatts,
-                                isForNotification: false
-                            )
-                        }
+                        .help("Settings")
                     }
                 }
             }
-            .font(.system(.headline, design: .rounded))
+            .buttonStyle(.plain)
+            .font(.system(size: 11, weight: .semibold, design: .rounded))
             .frame(maxWidth: .infinity, alignment: .trailing)
             .opacity(vm.notchState == .closed ? 0 : 1)
             .blur(radius: vm.notchState == .closed ? 20 : 0)
@@ -109,6 +77,14 @@ struct BoringHeader: View {
         }
         .foregroundColor(.gray)
         .environmentObject(vm)
+        .alert("RexNotch", isPresented: Binding(
+            get: { controls.errorMessage != nil },
+            set: { if !$0 { controls.errorMessage = nil } }
+        )) {
+            Button("OK") { controls.errorMessage = nil }
+        } message: {
+            Text(controls.errorMessage ?? "")
+        }
     }
 
     func isOSDType(_ type: SneakContentType) -> Bool {

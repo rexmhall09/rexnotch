@@ -1,6 +1,6 @@
 # RexNotch
 
-This fork builds a custom AI dashboard inside Boring Notch's native notch window. It shows Claude and Codex plan usage, Boring Notch's original calendar, Now Playing only while audio is playing, and live CPU/GPU/RAM percentages while expanded. The shelf is disabled and the idle closed notch is blank. Hover, volume/brightness indicators, and notification mirroring use the upstream Boring Notch implementation. See [RexNotch setup and data sources](REXNOTCH.md).
+This fork builds a compact AI dashboard inside Boring Notch's native notch window. It shows Claude and Codex plan usage, Boring Notch's original calendar, Now Playing only while audio is playing, and live CPU/GPU/RAM percentages on the left. The right side has a three-mode power button and Update All for Homebrew and Mac App Store apps. The shelf is disabled and the idle closed notch is blank. Hover, volume/brightness indicators, and notification mirroring use the upstream Boring Notch implementation. See [RexNotch setup and data sources](REXNOTCH.md).
 
 The original Boring Notch project and its documentation are preserved below. RexNotch is an independent GPL-3.0-or-later fork and is not an official Boring Notch release.
 

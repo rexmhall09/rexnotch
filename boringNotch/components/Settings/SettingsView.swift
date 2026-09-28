@@ -12,14 +12,12 @@ import SwiftUIIntrospect
 private enum SettingsTab: String, CaseIterable, Identifiable {
     case general
     case notch
+    case controls
     case appearance
     case media
     case calendar
-    case mirror
-    case battery
     case osd
     case notifications
-    case shortcuts
     case about
 
     enum Icon {
@@ -33,14 +31,12 @@ private enum SettingsTab: String, CaseIterable, Identifiable {
         switch self {
         case .general: "General"
         case .notch: "Notch"
+        case .controls: "Controls"
         case .appearance: "Appearance"
         case .media: "Media"
         case .calendar: "Calendar"
-        case .mirror: "Mirror"
-        case .battery: "Battery"
         case .osd: "OSD"
         case .notifications: "Notifications"
-        case .shortcuts: "Shortcuts"
         case .about: "About"
         }
     }
@@ -49,14 +45,12 @@ private enum SettingsTab: String, CaseIterable, Identifiable {
         switch self {
         case .general: .system("gear")
         case .notch: .custom("notch")
+        case .controls: .system("switch.2")
         case .appearance: .system("paintbrush")
         case .media: .system("play.rectangle")
         case .calendar: .system("calendar")
-        case .mirror: .system("video")
-        case .battery: .system("battery.100.bolt")
         case .osd: .system("dial.medium.fill")
         case .notifications: .system("bell.badge")
-        case .shortcuts: .system("keyboard")
         case .about: .system("info.circle")
         }
     }
@@ -92,6 +86,8 @@ struct SettingsView: View {
                     GeneralSettings()
                 case .notch:
                     NotchSettingsView()
+                case .controls:
+                    RexControlsSettingsView()
                 case .appearance:
                     AppearanceSettingsView()
                 case .media:
@@ -102,22 +98,8 @@ struct SettingsView: View {
                     CalendarSettings()
                 case .osd:
                     OSDSettings()
-                case .battery:
-                    BatterySettingsView()
-                case .mirror:
-                    WebcamSettingsView(camera: camera)
-                case .shortcuts:
-                    ShortcutsSettingsView()
                 case .about:
-                    if let controller = updaterController {
-                        AboutView(updaterController: controller)
-                    } else {
-                        // Fallback with a default controller
-                        AboutView(
-                            updaterController: SPUStandardUpdaterController(
-                                startingUpdater: false, updaterDelegate: nil,
-                                userDriverDelegate: nil))
-                    }
+                    AboutView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -53,6 +53,9 @@ struct DynamicNotchApp: App {
 
     init() {
         Defaults[.boringShelf] = false
+        Defaults[.compactMode] = false
+        Defaults[.enableSneakPeek] = false
+        Defaults[.lightingEffect] = false
         #if DEBUG
         OTPDetector.runSelfCheck()
         #endif
@@ -86,7 +89,7 @@ struct DynamicNotchApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra("RexNotch", systemImage: "sparkle", isInserted: $showMenuBarIcon) {
+        MenuBarExtra("RexNotch", systemImage: "rectangle.topthird.inset.filled", isInserted: $showMenuBarIcon) {
             Button("Settings") {
                 DispatchQueue.main.async {
                     SettingsWindowController.shared.showWindow()
