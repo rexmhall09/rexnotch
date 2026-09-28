@@ -401,6 +401,7 @@ final class MusicManager: ObservableObject {
         album = ""
         albumArt = defaultImage
         isPlaying = false
+        RexNowPlayingRetention.shared.playbackChanged(isPlaying: false, hasTrack: false)
         isPlayerIdle = true
         avgColor = .white
         bundleIdentifier = nil
@@ -480,13 +481,30 @@ final class MusicManager: ObservableObject {
         if playingStateChanged {
             NSLog("Playback state changed: \(state.isPlaying ? "Playing" : "Paused")")
             withAnimation(.smooth) {
-                self.isPlaying = state.isPlaying
+                let retention = RexNowPlayingRetention.shared
+                let hasTrack = !state.title.isEmpty || !self.songTitle.isEmpty
+                // Keep one of these true throughout a pause/resume transition so
+                // the media row and the notch height never briefly collapse.
+                if state.isPlaying {
+                    self.isPlaying = true
+                    retention.playbackChanged(isPlaying: true, hasTrack: hasTrack)
+                } else {
+                    retention.playbackChanged(isPlaying: false, hasTrack: hasTrack)
+                    self.isPlaying = false
+                }
                 self.updateIdleState(state: state.isPlaying)
             }
 
             if state.isPlaying && !state.title.isEmpty && !state.artist.isEmpty {
                 self.updateSneakPeek()
             }
+        }
+
+        // Some video players clear their metadata in the pause event. Keep the
+        // last visible track until the notch closes and the retention expires.
+        if !state.isPlaying && state.title.isEmpty && !self.songTitle.isEmpty {
+            self.timestampDate = state.lastUpdated
+            return
         }
 
         // Check for changes in track metadata using last artwork change values

@@ -241,6 +241,7 @@ struct ContentView: View {
                         vm.notchState == .open ? openedInsets.top : cornerRadiusInsets.closed.bottom
                     )
                     .padding([.horizontal, .bottom], vm.notchState == .open ? 12 : 0)
+                    .frame(width: vm.notchState == .open ? windowSize.width : nil)
                     .background(.black)
                     .clipShape(currentNotchShape)
                           .overlay(alignment: .top) {
@@ -350,6 +351,14 @@ struct ContentView: View {
         .frame(maxWidth: windowSize.width, maxHeight: windowSize.height, alignment: .top)
         .ignoresSafeArea(.all)
         .compositingGroup()
+        .mask(alignment: .top) {
+            if vm.notchState == .open {
+                currentNotchShape
+                    .frame(width: windowSize.width, height: vm.notchSize.height)
+            } else {
+                Rectangle().fill(.white)
+            }
+        }
         .scaleEffect(
             x: gestureScale,
             y: gestureScale,

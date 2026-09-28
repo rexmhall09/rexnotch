@@ -56,8 +56,9 @@ struct BoringHeader: View {
                         .disabled(controls.isChangingPower)
                         .help("Cycle Normal → Battery Saver → Keep Awake")
 
-                        Button("Update All") { controls.startUpdateAll() }
-                            .help("Update Homebrew and Mac App Store apps in Terminal")
+                        Button(controls.isUpdating ? "Updating…" : "Update All") { controls.startUpdateAll() }
+                            .disabled(controls.isUpdating)
+                            .help(controls.updateStatus.isEmpty ? "Update Homebrew and Mac App Store apps" : controls.updateStatus)
 
                         Button {
                             SettingsWindowController.shared.showWindow()

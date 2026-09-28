@@ -21,12 +21,14 @@ final class RexDashboardData: ObservableObject {
 
     @Published private(set) var claude = RexQuota()
     @Published private(set) var codex = RexQuota()
+    @Published private(set) var isRefreshingUsage = false
     @Published private(set) var cpu: Double?
     @Published private(set) var gpu: Double?
     @Published private(set) var ram: Double?
 
     private var previousCPU: (busy: UInt64, total: UInt64)?
     private var refreshTask: Task<Void, Never>?
+    private var refreshGeneration = 0
 
     private init() {
         sampleMetrics()
@@ -41,11 +43,17 @@ final class RexDashboardData: ObservableObject {
 
     func refreshUsage() {
         refreshTask?.cancel()
+        refreshGeneration += 1
+        let generation = refreshGeneration
+        isRefreshingUsage = true
         refreshTask = Task {
             async let claudeValue = Self.fetchClaude()
             async let codexValue = Self.fetchCodex()
-            claude = await claudeValue
-            codex = await codexValue
+            let (newClaude, newCodex) = await (claudeValue, codexValue)
+            guard !Task.isCancelled, generation == refreshGeneration else { return }
+            claude = newClaude
+            codex = newCodex
+            isRefreshingUsage = false
         }
     }
 

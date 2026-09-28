@@ -181,6 +181,8 @@ final class BoringViewModel: NSObject, ObservableObject {
 
         // Force music information update when notch is opened
         MusicManager.shared.forceUpdate()
+        RexDashboardData.shared.refreshUsage()
+        RexNowPlayingRetention.shared.notchDidOpen()
 
         return true
     }
@@ -196,6 +198,7 @@ final class BoringViewModel: NSObject, ObservableObject {
         self.notchSize = getClosedNotchSize(screenUUID: self.screenUUID)
         self.closedNotchSize = self.notchSize
         self.notchState = .closed
+        RexNowPlayingRetention.shared.notchDidClose()
         self.isPopoverActive = false
         if self.coordinator.shouldShowSneakPeek(on: self.screenUUID) {
             self.coordinator.toggleSneakPeek(status: false, type: .music, targetScreenUUID: self.screenUUID)
